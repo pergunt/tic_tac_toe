@@ -1,0 +1,12 @@
+.resetButton {
+    padding: 10px 15px;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: .3s;
+
+    &:hover {
+        background-color: lightcoral;
+        color: white;
+    }
+}

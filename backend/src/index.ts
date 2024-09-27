@@ -24,7 +24,7 @@ app.use(
     parseUndefined: true,
     parseBoolean: true,
     parseNumber: true,
-  })
+  }),
 );
 app.use(
   cors({
@@ -38,7 +38,7 @@ app.use(
 
       callback(null, true);
     },
-  })
+  }),
 );
 
 app.use("/api", router);

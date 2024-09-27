@@ -1,4 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npm ci && cd frontend && npm ci && cd ../backend && npm ci
+pnpm i --frozen-lockfile && cd frontend && pnpm i --frozen-lockfile && cd ../backend && pnpm i --frozen-lockfile

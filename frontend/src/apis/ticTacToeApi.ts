@@ -1,8 +1,19 @@
 import { API } from "configs";
 
 export const ticTacToeApi = {
-  baseURL: "/products",
-  getOne(id: number | string) {
-    return API.get(`${this.baseURL}/${id}`);
+  baseURL: "/tic-tac-toe",
+
+  getBoard() {
+    return API.get(`${this.baseURL}/board`);
+  },
+
+  handleNextMove(index: number) {
+    return API.post(`${this.baseURL}/next-move`, {
+      index,
+    });
+  },
+
+  resetGame() {
+    return API.delete(`${this.baseURL}/reset`);
   },
 };

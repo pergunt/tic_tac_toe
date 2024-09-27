@@ -1,65 +1,94 @@
-import { ApiError } from "exceptions";
-
-interface Tile {
-  id: number;
-  type: "cross" | "circle";
-}
+type Tile = "O" | "X" | null;
 
 export class TicTacToeService {
-  tiles: Tile[];
+  board: Array<Tile> = Array(9).fill(null);
 
-  constructor() {
-    this.tiles = [];
+  reset() {
+    this.board = Array(9).fill(null);
+
+    return this.board;
   }
 
-  checkWinners() {
-    if (this.tiles.length !== 9) {
-      return null;
-    }
+  checkWinner(): Tile {
+    const winningCombinations = [
+      // Rows
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
 
-    const map = this.tiles.reduce((prev, curr) => {
-      prev.set(curr.type, (prev.get(curr.type) || 0) + 1);
+      // Columns
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
 
-      return prev;
-    }, new Map());
+      // Diagonals
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
 
-    let winner = "server";
+    let winner: Tile = null;
+    const { board } = this;
 
-    if (map.get("cross") < map.get("circle")) {
-      winner = "client";
-    }
+    winningCombinations.forEach((combination) => {
+      const [a, b, c] = combination;
+
+      if (board[a] === board[b] && board[a] === board[c]) {
+        winner = board[a];
+      }
+    });
 
     return winner;
   }
 
-  validateTiles(tileID: number) {
-    if (this.tiles.some((tile) => tile.id === tileID)) {
-      throw ApiError.BadRequest("This tile has been already set");
-    }
+  getRandomIndex() {
+    return Math.floor(Math.random() * this.board.length - 1);
   }
 
-  setTiles(tileID: number) {
+  validate(index: number) {
+    return !!this.board[index];
+  }
+
+  updateBoard(index: number) {
     // a client's move
-    this.tiles.push({
-      id: tileID,
-      type: "cross",
-    });
+    this.board.splice(index, 1, "X");
 
-    // a random move
-    this.tiles.push({
-      id: Math.ceil(Math.random() * this.tiles.length),
-      type: "circle",
-    });
+    let randomIndex = this.getRandomIndex();
+
+    while (this.board[randomIndex]) {
+      randomIndex = this.getRandomIndex();
+    }
+
+    this.board.splice(randomIndex, 1, "O");
   }
 
-  handleNextMove(tileID: number) {
-    this.validateTiles(tileID);
+  getBoard() {
+    return this.board;
+  }
 
-    this.setTiles(tileID);
+  handleNextMove(index: number) {
+    let winner = this.checkWinner();
+
+    if (this.validate(index)) {
+      return {
+        board: this.board,
+        winner,
+      };
+    }
+
+    if (winner) {
+      return {
+        board: this.board,
+        winner,
+      };
+    }
+
+    this.updateBoard(index);
+
+    winner = this.checkWinner();
 
     return {
-      tiles: this.tiles,
-      winner: this.checkWinners(),
+      board: this.board,
+      winner,
     };
   }
 }
