@@ -37,10 +37,16 @@
     transform: translate(-50%, -50%) rotate(90deg);;
 }
 
+.vertical {
+    transform: translate(-50%, -50%) rotate(0);;
+}
+
 .leftDiagonal {
-    transform: translate(-50%, -50%) rotate(45deg);
+    transform: translate(-50%, -50%) rotate(-45deg);
+    height: 141%;
 }
 
 .rightDiagonal {
-    transform: translate(-50%, -50%) rotate(-45deg);
+    transform: translate(-50%, -50%) rotate(45deg);
+    height: 141%;
 }

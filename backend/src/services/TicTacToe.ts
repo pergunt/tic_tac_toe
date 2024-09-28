@@ -1,15 +1,20 @@
 type Tile = "O" | "X" | null;
 
 export class TicTacToeService {
+  winner: Tile | null = null;
   board: Array<Tile> = Array(9).fill(null);
 
   reset() {
     this.board = Array(9).fill(null);
+    this.winner = null;
 
-    return this.board;
+    return {
+      board: this.board,
+      winner: this.winner,
+    };
   }
 
-  checkWinner(): Tile {
+  checkWinners(): Tile {
     const winningCombinations = [
       // Rows
       [0, 1, 2],
@@ -41,11 +46,15 @@ export class TicTacToeService {
   }
 
   getRandomIndex() {
-    return Math.floor(Math.random() * this.board.length - 1);
+    return Math.floor(Math.random() * this.board.length);
   }
 
-  validate(index: number) {
+  tileExists(index: number) {
     return !!this.board[index];
+  }
+
+  allTilesFilled() {
+    return this.board.every((tile) => tile !== null);
   }
 
   updateBoard(index: number) {
@@ -53,6 +62,10 @@ export class TicTacToeService {
     this.board.splice(index, 1, "X");
 
     let randomIndex = this.getRandomIndex();
+
+    if (this.allTilesFilled()) {
+      return;
+    }
 
     while (this.board[randomIndex]) {
       randomIndex = this.getRandomIndex();
@@ -62,13 +75,16 @@ export class TicTacToeService {
   }
 
   getBoard() {
-    return this.board;
+    return {
+      board: this.board,
+      winner: this.checkWinners(),
+    };
   }
 
   handleNextMove(index: number) {
-    let winner = this.checkWinner();
+    let winner = this.checkWinners();
 
-    if (this.validate(index)) {
+    if (this.tileExists(index)) {
       return {
         board: this.board,
         winner,
@@ -84,7 +100,7 @@ export class TicTacToeService {
 
     this.updateBoard(index);
 
-    winner = this.checkWinner();
+    winner = this.checkWinners();
 
     return {
       board: this.board,

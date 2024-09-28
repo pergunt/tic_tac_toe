@@ -7,16 +7,14 @@ interface SquareButtonProps {
   index: number;
   onClick: () => void;
   tile: Types.BoardTile;
-  winner: boolean;
-  rotation: Types.TileRotation;
+  winnerInfo: Types.WinnerInfo | null;
 }
 
 export const SquareButton: FC<SquareButtonProps> = ({
   index,
   onClick,
   tile,
-  winner,
-  rotation,
+  winnerInfo,
 }) => {
   return (
     <button
@@ -28,10 +26,13 @@ export const SquareButton: FC<SquareButtonProps> = ({
       })}
     >
       {tile}
-      {winner && (
+      {winnerInfo && winnerInfo.combination.includes(index) && (
         <span
           className={classNames(styles.crossLine, {
-            [styles.horizontal]: rotation === "horizontal",
+            [styles.horizontal]: winnerInfo.rotation === "horizontal",
+            [styles.vertical]: winnerInfo.rotation === "vertical",
+            [styles.leftDiagonal]: winnerInfo.rotation === "diagonal-left",
+            [styles.rightDiagonal]: winnerInfo.rotation === "diagonal-right",
           })}
         />
       )}

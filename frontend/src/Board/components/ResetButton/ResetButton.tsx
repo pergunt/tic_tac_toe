@@ -4,7 +4,7 @@ import { Types } from "../../duck";
 import styles from "./ResetButton.module.css";
 
 interface ResetButtonProps {
-  onReset: (emptyBoard: Types.BoardState) => void;
+  onReset: (args: { board: Types.BoardState; winner: null }) => void;
 }
 
 export const ResetButton: FC<ResetButtonProps> = ({ onReset }) => {

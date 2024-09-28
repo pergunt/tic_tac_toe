@@ -2,35 +2,32 @@ import { FC, useEffect, useState } from "react";
 import { ticTacToeApi } from "apis";
 import { SquareButton, ResetButton } from "./components";
 import styles from "./Board.module.css";
-import { Types } from "./duck";
+import { Types, utils } from "./duck";
 
 export const Board: FC = () => {
-  const [winner, setWinner] = useState<Types.BoardTile>(null);
-  const [board, setBoard] = useState<Types.BoardState>([
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-  ]);
+  const [state, setState] = useState<{
+    board: Types.BoardState;
+    winner: Types.BoardTile;
+  }>(() => ({
+    board: Array(9).fill(null),
+    winner: null,
+  }));
 
   useEffect(() => {
     ticTacToeApi.getBoard().then((response) => {
-      setBoard(response.data);
+      setState(response.data);
     });
   }, []);
 
   const onSquareClick = (index: number) => async () => {
+    if (state.winner || state.board.every((tile) => tile !== null)) {
+      return;
+    }
+
     try {
       const { data } = await ticTacToeApi.handleNextMove(index);
 
-      setBoard(data.board);
-
-      setWinner(data.winner);
+      setState(data);
     } catch (e: any) {
       alert(e.response?.data?.message);
     }
@@ -39,7 +36,7 @@ export const Board: FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.board}>
-        {board.map((tile, index) => {
+        {state.board.map((tile, index) => {
           return (
             <SquareButton
               // eslint-disable-next-line
@@ -47,13 +44,15 @@ export const Board: FC = () => {
               tile={tile}
               index={index}
               onClick={onSquareClick(index)}
-              winner={!!winner}
-              rotation="vertical"
+              winnerInfo={utils.getWinnerInfo({
+                board: state.board,
+                winner: state.winner,
+              })}
             />
           );
         })}
       </div>
-      <ResetButton onReset={(emptyBoard) => setBoard(emptyBoard)} />
+      <ResetButton onReset={(result) => setState(result)} />
     </div>
   );
 };
