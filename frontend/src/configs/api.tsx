@@ -11,7 +11,7 @@ API.interceptors.response.use(
     console.error(error.response.data);
 
     throw error;
-  }
+  },
 );
 
 export default API;
